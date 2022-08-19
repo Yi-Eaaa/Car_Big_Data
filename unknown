@@ -1,0 +1,12 @@
+
+
+<a id="a-link" href="https://g.alicdn.com/sd/punish/waf_block.html?wh_ttid=pc&uuid=d8304788fae33e22215fdcb44b034a80"></a>
+<script>
+  document.getElementById("a-link").click();
+
+  window._config_ = {
+    "action": "block",
+    "url": "https://g.alicdn.com/sd/punish/block_h5.html?wh_ttid=pc&uuid=d8304788fae33e22215fdcb44b034a80"
+  };
+</script>
+<!--rgv587_flag:sm-->
