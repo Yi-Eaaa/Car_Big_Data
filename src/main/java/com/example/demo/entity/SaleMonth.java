@@ -41,7 +41,7 @@ public class SaleMonth implements Serializable {
     /**
      * 汇总销量车型
      */
-    private String saleCarNameId;
+    private Integer saleCarNameId;
 
     /**
      * 汇总销量

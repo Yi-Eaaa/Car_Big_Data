@@ -37,7 +37,7 @@ public class SaleDay implements Serializable {
      * 汇总销量月份
      */
     private Integer saleMonthId;
-
+    private Integer saleMonth;
     /**
      * 汇总销量年份
      */
@@ -46,7 +46,7 @@ public class SaleDay implements Serializable {
     /**
      * 汇总销量车型
      */
-    private String saleCarNameId;
+    private Integer saleCarNameId;
 
     /**
      * 汇总销量

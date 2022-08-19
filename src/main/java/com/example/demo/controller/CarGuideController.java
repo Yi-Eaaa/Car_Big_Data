@@ -88,30 +88,39 @@ public class CarGuideController {
     ){
         buffInit();
         List<CarParameter> lib = iCarParameterService.list();
-        //List<CarParameter> res = new ArrayList<>();
-        if(!name.isEmpty()){
-            for(CarParameter value : lib){
-                if(!value.getSysParaCarName().contains(name)){
-                    lib.remove(value);
+        List<CarParameter> res = new ArrayList<>();
+        if(!name.isEmpty()) {
+            for (CarParameter value : lib) {
+                if (value.getSysParaCarName().contains(name)) {
+                    res.add(value);
                 }
             }
-        }
-        if(!type.isEmpty()){
-            for(CarParameter value : lib){
-                if(!value.getSysParaType().contains(type)){
-                    lib.remove(value);
+            if (!type.isEmpty()) {
+                res.clear();
+                for (CarParameter value : lib) {
+                    if (value.getSysParaCarName().contains(name) && value.getSysParaType().contains(type)) {
+                        res.add(value);
+                    }
                 }
-            }
-        }
-        if(!manufactor.isEmpty()){
-            for(CarParameter value : lib){
-                if(!value.getSysParaManufactor().contains(manufactor)){
-                    lib.remove(value);
+                if (!manufactor.isEmpty()) {
+                    res.clear();
+                    for (CarParameter value : lib) {
+                        if (value.getSysParaCarName().contains(name) && value.getSysParaType().contains(type) && value.getSysParaManufactor().contains(manufactor)) {
+                            res.add(value);
+                        }
+                    }
+                    carInfoBuffer.addAll(res);
+                    return res;
                 }
+                carInfoBuffer.addAll(res);
+                return res;
             }
+            carInfoBuffer.addAll(res);
+            return res;
+        }else{
+            carInfoBuffer.addAll(lib);
+            return lib;
         }
-        carInfoBuffer.addAll(lib);
-        return lib;
     }
 
     @GetMapping("/changepage")
