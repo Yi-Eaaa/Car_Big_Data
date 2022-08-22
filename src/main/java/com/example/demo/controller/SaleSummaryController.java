@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/summary")
-public class SaleSummary {
+public class SaleSummaryController {
     @Autowired
     private ISaleAreaService iSaleAreaService;
     @Autowired

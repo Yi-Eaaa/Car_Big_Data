@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.controller.DataUpdateController;
 import com.example.demo.service.ICarParameterService;
 import com.example.demo.service.IDataSaleNumService;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,8 @@ class CaranalysisApplicationTests {
     private IDataSaleNumService iDataSaleNumService;
     @Test
     void contextLoads() {
-        System.out.println(iDataSaleNumService.list());
+        //System.out.println(iDataSaleNumService.list());
+        DataUpdateController.readCsv("C:\\traditionalD\\education\\地区销售数据.csv");
     }
 
 }
