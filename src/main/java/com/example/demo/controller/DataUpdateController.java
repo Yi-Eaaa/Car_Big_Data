@@ -8,6 +8,7 @@ import com.example.demo.service.IDataSaleNumService;
 import net.sf.jsqlparser.expression.DoubleValue;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.xml.crypto.Data;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -196,6 +197,8 @@ public class DataUpdateController {
             while((line = br.readLine())!=null){
                 everyLine = line;
                 //System.out.println(everyLine);
+
+                //create temp entity to store list(except cnt for later operation)
                 String[] tmp = everyLine.split(",");
                 DataSaleNum tempDataSaleNumEntity = new DataSaleNum();
                 tempDataSaleNumEntity.setCarname(tmp[0]);
@@ -205,10 +208,27 @@ public class DataUpdateController {
                 Double p2 = Double.parseDouble(tmp[3]);
                 if(p1<=p2){ tempDataSaleNumEntity.setMinprice(p1);tempDataSaleNumEntity.setMaxprice(p2);}
                 else{tempDataSaleNumEntity.setMinprice(p2);tempDataSaleNumEntity.setMaxprice(p1);}
-                tempDataSaleNumEntity.setSaleCnt(Integer.valueOf(tmp[4]));
+
+
                 System.out.println(tempDataSaleNumEntity);
+
+                //create wrapper to filter by provinceName
                 UpdateWrapper<DataSaleNum> updateWrapper = new UpdateWrapper<>();
                 updateWrapper.eq("province",provinceName);
+
+                //search database with wrapper (only one entity in principle)
+                List<DataSaleNum> dataList = iDataSaleNumService.list(updateWrapper);
+
+                //get the cnt that has existed
+                Integer baseCnt = 0;
+                for(DataSaleNum value : dataList){
+                    baseCnt = value.getSaleCnt();
+                    break;//only one entity! in principle...
+                }
+
+                tempDataSaleNumEntity.setSaleCnt(baseCnt+Integer.valueOf(tmp[4]));//now the data has been prepared!
+
+                //now, update!
                 //iDataSaleNumService.update(tempDataSaleNumEntity,updateWrapper);
                 allString.add(everyLine);
             }
