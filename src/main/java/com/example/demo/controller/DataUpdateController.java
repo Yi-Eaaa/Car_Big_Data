@@ -1,18 +1,17 @@
 package com.example.demo.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.demo.entity.DataSaleNum;
-import com.example.demo.mapper.DataSaleNumMapper;
 import com.example.demo.service.IDataSaleNumService;
-import net.sf.jsqlparser.expression.DoubleValue;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.xml.crypto.Data;
+import org.springframework.stereotype.Component;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@Component
 public class DataUpdateController {
 
     @Autowired
@@ -201,23 +200,30 @@ public class DataUpdateController {
                 //create temp entity to store list(except cnt for later operation)
                 String[] tmp = everyLine.split(",");
                 DataSaleNum tempDataSaleNumEntity = new DataSaleNum();
+                String carName = tmp[0];
                 tempDataSaleNumEntity.setCarname(tmp[0]);
-                String provinceName = findObjectProvince(tmp[1]);
+                String cityName = tmp[1];
+                tempDataSaleNumEntity.setCity(cityName);
+                String provinceName = findObjectProvince(cityName);
                 tempDataSaleNumEntity.setProvince(provinceName);
                 Double p1 = Double.parseDouble(tmp[2]);
                 Double p2 = Double.parseDouble(tmp[3]);
                 if(p1<=p2){ tempDataSaleNumEntity.setMinprice(p1);tempDataSaleNumEntity.setMaxprice(p2);}
                 else{tempDataSaleNumEntity.setMinprice(p2);tempDataSaleNumEntity.setMaxprice(p1);}
-
+                tempDataSaleNumEntity.setSaleCnt(Integer.valueOf(tmp[4]));
 
                 System.out.println(tempDataSaleNumEntity);
 
                 //create wrapper to filter by provinceName
-                UpdateWrapper<DataSaleNum> updateWrapper = new UpdateWrapper<>();
-                updateWrapper.eq("province",provinceName);
-
                 //search database with wrapper (only one entity in principle)
-                List<DataSaleNum> dataList = iDataSaleNumService.list(updateWrapper);
+                QueryWrapper<DataSaleNum> queryWrapper = new QueryWrapper<>();
+                queryWrapper.like("city",cityName).like("province",provinceName).like("carname",carName);
+                List<DataSaleNum> dataList = iDataSaleNumService.list(queryWrapper);
+                if(dataList.isEmpty()){
+                    //e.printStackTrace();
+                    System.out.println("查询失败的所以添加： "+tempDataSaleNumEntity);
+                    iDataSaleNumService.save(tempDataSaleNumEntity);
+                }
 
                 //get the cnt that has existed
                 Integer baseCnt = 0;
@@ -226,15 +232,23 @@ public class DataUpdateController {
                     break;//only one entity! in principle...
                 }
 
-                tempDataSaleNumEntity.setSaleCnt(baseCnt+Integer.valueOf(tmp[4]));//now the data has been prepared!
+                //create update wrapper!
+                UpdateWrapper<DataSaleNum> updateWrapper = new UpdateWrapper<>();
+                updateWrapper.eq("city",cityName).eq("province",provinceName).eq("carname",carName);
 
+                tempDataSaleNumEntity.setSaleCnt(Integer.valueOf(tmp[4]));//now the data has been prepared!
+                System.out.println(tempDataSaleNumEntity);
                 //now, update!
-                //iDataSaleNumService.update(tempDataSaleNumEntity,updateWrapper);
+                iDataSaleNumService.update(tempDataSaleNumEntity,updateWrapper);
                 allString.add(everyLine);
             }
         }catch (IOException e){
             e.printStackTrace();
         }
-        return  allString;
+        return allString;
+    }
+
+    public static void main(String[] args) {
+        readCsv("C:\\traditionalD\\education\\地区销售数据.csv");
     }
 }

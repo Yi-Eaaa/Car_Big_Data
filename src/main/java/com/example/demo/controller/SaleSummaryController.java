@@ -1,14 +1,9 @@
 package com.example.demo.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.example.demo.entity.SaleArea;
-import com.example.demo.entity.SaleDay;
-import com.example.demo.entity.SaleMonth;
-import com.example.demo.entity.SaleYear;
-import com.example.demo.service.ISaleAreaService;
-import com.example.demo.service.ISaleDayService;
-import com.example.demo.service.ISaleMonthService;
-import com.example.demo.service.ISaleYearService;
+import com.example.demo.entity.*;
+import com.example.demo.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,10 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/summary")
@@ -32,6 +25,28 @@ public class SaleSummaryController {
     private ISaleMonthService iSaleMonthService;
     @Autowired
     private ISaleDayService iSaleDayService;
+    @Autowired
+    private IDataSaleNumService iDataSaleNumService;
+
+
+    @GetMapping("/areadata")
+    public DataSaleNum getAreaSaleData(
+            @RequestParam(value = "carname",required = true) String carname,
+            @RequestParam(value = "area",required = true) String area
+    ){
+        QueryWrapper<DataSaleNum> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like("province",area).like("carname",carname);
+        List<DataSaleNum> dataList = iDataSaleNumService.list(queryWrapper);
+        Integer cnt = 0;
+        for(DataSaleNum value : dataList){
+            cnt+=value.getSaleCnt();
+        }
+        DataSaleNum res = new DataSaleNum();
+        res.setSaleCnt(cnt);
+        res.setProvince(area);
+        res.setCarname(carname);
+        return res;
+    }
 
     @GetMapping("/saledata")
     public List sumSaleData(

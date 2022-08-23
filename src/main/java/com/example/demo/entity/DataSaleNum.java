@@ -24,6 +24,8 @@ public class DataSaleNum implements Serializable {
 
     private String province;
 
+    private String city;
+
     private Double minprice;
 
     private Double maxprice;
