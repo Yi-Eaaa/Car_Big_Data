@@ -1,7 +1,6 @@
 package com.example.demo;
 
 import com.example.demo.controller.DataUpdateController;
-import com.example.demo.service.ICarParameterService;
 import com.example.demo.service.IDataSaleNumService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

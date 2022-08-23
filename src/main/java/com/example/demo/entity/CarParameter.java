@@ -2,7 +2,6 @@ package com.example.demo.entity;
 
 import java.time.LocalDate;
 import java.io.Serializable;
-import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
@@ -15,7 +14,7 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author dylen
- * @since 2022-08-17
+ * @since 2022-08-23
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -40,6 +39,8 @@ public class CarParameter implements Serializable {
      */
     private Double sysParaMaxspeed;
 
+    private Double sysParaAcc;
+
     /**
      * 汽车扭矩
      */
@@ -54,6 +55,8 @@ public class CarParameter implements Serializable {
      * 汽车百公里能耗
      */
     private Double sysParaKmEnergy;
+
+    private Double sysParaKmEnergyReport;
 
     /**
      * 汽车车型类型
@@ -73,12 +76,24 @@ public class CarParameter implements Serializable {
     /**
      * 汽车生产年份
      */
-    private Date sysParaProductiveYear;
+    private LocalDate sysParaProductiveYear;
 
     /**
      * 汽车型号/名称
      */
     private String sysParaCarName;
+    /**
+     * 汽车人气指数
+     */
+    private Integer sysParaPopularity;
+    /**
+     * 汽车厂商指导价格
+     */
+    private Double sysParaGuidePrice;
+    /**
+     * 汽车成交最低价格
+     */
+    private Double sysParaMinPrice;
 
 
 }

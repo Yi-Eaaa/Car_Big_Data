@@ -1,10 +1,8 @@
 package com.example.demo.controller;
 
 
-import cn.hutool.db.Page;
 import com.example.demo.entity.CarParameter;
 import com.example.demo.service.*;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
