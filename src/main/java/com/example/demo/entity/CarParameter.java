@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import java.time.LocalDate;
 import java.io.Serializable;
+import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
@@ -27,7 +28,7 @@ public class CarParameter implements Serializable {
      * 参数所属汽车id
      */
     @TableId(value = "sys_para_car_id")
-    private String sysParaCarId;
+    private Integer sysParaCarId;
 
     /**
      * 汽车最小离地间隙
@@ -67,7 +68,10 @@ public class CarParameter implements Serializable {
      * 汽车生产厂家
      */
     private String sysParaManufactor;
-
+    /**
+     * 汽车生产厂家id
+     */
+    private Integer sysParaManufactorId;
     /**
      * 汽车动力类型
      */
@@ -76,7 +80,7 @@ public class CarParameter implements Serializable {
     /**
      * 汽车生产年份
      */
-    private LocalDate sysParaProductiveYear;
+    private Date sysParaProductiveYear;
 
     /**
      * 汽车型号/名称

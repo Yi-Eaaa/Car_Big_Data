@@ -3,7 +3,9 @@ package com.example.demo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.demo.controller.DataUpdateController;
+import com.example.demo.entity.CarParameter;
 import com.example.demo.entity.DataSaleNum;
+import com.example.demo.service.ICarParameterService;
 import com.example.demo.service.IDataSaleNumService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @SpringBootTest
@@ -18,6 +21,11 @@ class CaranalysisApplicationTests {
 
     @Autowired
     private IDataSaleNumService iDataSaleNumService;
+
+    @Autowired
+    private ICarParameterService iCarParameterService;
+
+    private static HashMap<String,Integer> brandIdMap = new HashMap<>();
 
     public static List<String[]> allCity() {
 
@@ -180,12 +188,42 @@ class CaranalysisApplicationTests {
         }
         return "查询失败";
     }
+    public static Integer findBrandIdByBrand(String brand){
+        if(brandIdMap.isEmpty()){
+            String filepath = "C:\\\\traditionalD\\\\education\\\\brandfather_brand_car_id.csv";
+            File csv = new File(filepath);
+            csv.setReadable(true);
+            csv.setWritable(false);
+            BufferedReader br = null;
+            try{
+                br = new BufferedReader(new FileReader(csv));
+            }catch (FileNotFoundException e){
+                e.printStackTrace();
+            }
+            String line = "";
+            String everyLine = "";
+            try{
+                line = br.readLine();
+                while((line = br.readLine())!=null){
+                    everyLine = line;
+                    String[] tmp = everyLine.split(",");
+                    Integer tmp_id = Integer.parseInt(tmp[3]);
+                    String tmp_brand = tmp[4];
+                    brandIdMap.put(tmp_brand,tmp_id);
+                }
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        //System.out.println(brandIdMap);
+        return brandIdMap.getOrDefault(brand,-1);
 
-    @Test
-    void contextLoads() {
+    }
+
+    void saleAreaContextLoads() {
         //System.out.println(iDataSaleNumService.list());
         //DataUpdateController.readCsv("C:\\traditionalD\\education\\地区销售数据.csv");
-        /*String filepath = "C:\\\\traditionalD\\\\education\\\\地区销售数据.csv";
+        String filepath = "C:\\\\traditionalD\\\\education\\\\地区销售数据.csv";
         File csv = new File(filepath);
         csv.setReadable(true);
         csv.setWritable(false);
@@ -197,7 +235,6 @@ class CaranalysisApplicationTests {
         }
         String line = "";
         String everyLine = "";
-        ArrayList<String> allString = new ArrayList<>();
         try{
             while((line = br.readLine())!=null){
                 everyLine = line;
@@ -216,7 +253,7 @@ class CaranalysisApplicationTests {
                 Double p2 = Double.parseDouble(tmp[3]);
                 if(p1<=p2){ tempDataSaleNumEntity.setMinprice(p1);tempDataSaleNumEntity.setMaxprice(p2);}
                 else{tempDataSaleNumEntity.setMinprice(p2);tempDataSaleNumEntity.setMaxprice(p1);}
-                tempDataSaleNumEntity.setSaleCnt(Integer.valueOf(tmp[4]));
+                try{tempDataSaleNumEntity.setSaleCnt(Integer.valueOf(tmp[4]));}catch (NumberFormatException e){tempDataSaleNumEntity.setSaleCnt(0);}
 
                 System.out.println(tempDataSaleNumEntity);
 
@@ -242,15 +279,171 @@ class CaranalysisApplicationTests {
                 UpdateWrapper<DataSaleNum> updateWrapper = new UpdateWrapper<>();
                 updateWrapper.eq("city",cityName).eq("province",provinceName).eq("carname",carName);
 
-                tempDataSaleNumEntity.setSaleCnt(Integer.valueOf(tmp[4]));//now the data has been prepared!
+                try{tempDataSaleNumEntity.setSaleCnt(Integer.valueOf(tmp[4]));}catch (NumberFormatException e){tempDataSaleNumEntity.setSaleCnt(0);}//now the data has been prepared!
                 System.out.println(tempDataSaleNumEntity);
                 //now, update!
                 iDataSaleNumService.update(tempDataSaleNumEntity,updateWrapper);
-                allString.add(everyLine);
             }
         }catch (IOException e){
             e.printStackTrace();
-        }*/
+        }
     }
 
+    void saleTimeContextLoads(){
+
+    }
+    @Test
+    void carParameterContextLoads(){
+        String filepath = "C:\\\\traditionalD\\\\education\\\\car_parameter.csv";
+        File csv = new File(filepath);
+        csv.setReadable(true);
+        csv.setWritable(false);
+        BufferedReader br = null;
+        try{
+            br = new BufferedReader(new FileReader(csv));
+        }catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        String line = "";
+        String everyLine = "";
+        try{
+            line = br.readLine();
+            while((line = br.readLine())!=null){
+                everyLine = line;
+                //System.out.println(everyLine);
+
+
+
+                //create temp val to store a line
+                String[] tmp = everyLine.split(",");
+                Integer carId =0;
+                try {
+                    carId = Integer.parseInt(tmp[0]);
+                }catch (NumberFormatException e){
+                    carId = -1;
+                }
+                String carName ="";
+                try {
+                    carName = (tmp[1].split(" "))[0];
+                }catch (Exception e){
+                    carName = "null";
+                }
+                Double carGuidePrice =0.0;
+                try {
+                    carGuidePrice = tmp[2].equals("-") ? -1.0 : Double.parseDouble(tmp[2]);
+                }catch (NumberFormatException e){
+                    carGuidePrice = -1.0;
+                }
+                Double carMinPrice = 0.0;
+                try {
+                    carMinPrice = tmp[3].equals("-") ? -1.0 : Double.parseDouble(tmp[3]);
+                }catch (NumberFormatException e){
+                    carMinPrice = -1.0;
+                }
+                Integer carPopularity =0;
+                try {
+                    carPopularity = tmp[4].equals("-") ? -1 : Integer.parseInt(tmp[4]);
+                }catch (NumberFormatException e){
+                    carPopularity = -1;
+                }
+                String manufactor = tmp[5];
+                Integer manufactorId = findBrandIdByBrand(tmp[5]);
+                String type = tmp[6];
+                Double maxSpeed =0.0;
+                try {
+                    maxSpeed = tmp[7].equals("-") ? -1.0 : Double.parseDouble(tmp[7]);
+                }catch (NumberFormatException e){
+                    maxSpeed = -1.0;
+                }
+                Double acc =0.0;
+                try {
+                    acc = tmp[8].equals("-") ? -1.0 : Double.parseDouble(tmp[8]);
+                }catch (NumberFormatException e){
+                    acc = -1.0;
+                }
+                Double energy =0.0;
+                try {
+                    energy = tmp[9].equals("-") ? -1.0 : Double.parseDouble(tmp[9]);
+                }catch (NumberFormatException e){
+                    energy = -1.0;
+                }
+                Double reportEnergy  = 0.0;
+                try {
+                    reportEnergy = tmp[10].equals("-") ? -1.0 : Double.parseDouble(tmp[10]);
+                }catch (NumberFormatException e){
+                    e.printStackTrace();
+                    reportEnergy = -1.0;
+                }
+                Double clearance =0.0;
+                try {
+                    clearance = tmp[11].equals("-") ? -1.0 : Double.parseDouble(tmp[11]);
+                }catch (NumberFormatException e){
+                    clearance = -1.0;
+                }
+                Double power =0.0;
+                try {
+                    power = tmp[12].equals("-") ? -1.0 : Double.parseDouble(tmp[12]);
+                }catch (NumberFormatException e){
+                    power = -1.0;
+                }
+                Double torque =0.0;
+                try {
+                    torque = tmp[13].equals("-") ? -1.0 : Double.parseDouble(tmp[13]);
+                }catch (NumberFormatException e){
+                    torque = -1.0;
+                }
+
+                String powerType = tmp[14];
+
+                //create temp entity to store list(except cnt for later operation)
+                CarParameter tempCarParameterEntity = new CarParameter();
+                tempCarParameterEntity.setSysParaCarId(carId);
+                tempCarParameterEntity.setSysParaCarName(carName);
+                tempCarParameterEntity.setSysParaGuidePrice(carGuidePrice);
+                tempCarParameterEntity.setSysParaMinPrice(carMinPrice);
+                tempCarParameterEntity.setSysParaPopularity(carPopularity);
+                tempCarParameterEntity.setSysParaManufactor(manufactor);
+                tempCarParameterEntity.setSysParaManufactorId(manufactorId);
+                tempCarParameterEntity.setSysParaType(type);
+                tempCarParameterEntity.setSysParaMaxspeed(maxSpeed);
+                tempCarParameterEntity.setSysParaAcc(acc);
+                tempCarParameterEntity.setSysParaKmEnergy(energy);
+                tempCarParameterEntity.setSysParaKmEnergyReport(reportEnergy);
+                tempCarParameterEntity.setSysParaMinclearance(clearance);
+                tempCarParameterEntity.setSysParaPower(power);
+                tempCarParameterEntity.setSysParaTorque(torque);
+                tempCarParameterEntity.setSysParaPowerType(powerType);
+
+
+
+
+                //create wrapper to filter by carId
+                //search database with wrapper (only one entity in principle)
+
+                QueryWrapper<CarParameter> queryWrapper = new QueryWrapper<>();
+                queryWrapper.eq("sys_para_car_id",carId);
+                List<CarParameter> dataList = iCarParameterService.list(queryWrapper);
+                if(dataList.isEmpty()){
+                    //System.out.println("添加： "+tempCarParameterEntity);
+                    iCarParameterService.save(tempCarParameterEntity);
+                }
+
+                //create update wrapper!
+                UpdateWrapper<CarParameter> updateWrapper = new UpdateWrapper<>();
+                updateWrapper.eq("sys_para_car_id",carId);
+                //System.out.println(tempCarParameterEntity);
+
+                /*UpdateWrapper<DataSaleNum> updateWrapper = new UpdateWrapper<>();
+                updateWrapper.eq("city",cityName).eq("province",provinceName).eq("carname",carName);
+
+                try{tempDataSaleNumEntity.setSaleCnt(Integer.valueOf(tmp[4]));}catch (NumberFormatException e){tempDataSaleNumEntity.setSaleCnt(0);}//now the data has been prepared!
+                System.out.println(tempDataSaleNumEntity);*/
+
+                //now, update!
+                iCarParameterService.update(tempCarParameterEntity,updateWrapper);
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 }

@@ -1,12 +1,16 @@
 package com.example.demo.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.example.demo.entity.CarParameter;
+import com.example.demo.entity.DataSaleNum;
 import com.example.demo.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -82,43 +86,33 @@ public class CarGuideController {
     public List<CarParameter> search(
             @RequestParam(value = "name",required = false,defaultValue = "") String name,
             @RequestParam(value = "type",required = false,defaultValue = "") String type,
-            @RequestParam(value = "manufactor",required = false,defaultValue = "") String manufactor
+            @RequestParam(value = "manufactor",required = false,defaultValue = "-1") String manufactor,
+            @RequestParam(value = "speedmax",required = false,defaultValue = "-1") Double speedmax,
+            @RequestParam(value = "speedmin",required = false,defaultValue = "-1") Double speedmin,
+            @RequestParam(value = "torquemax",required = false,defaultValue = "-1") Double torquemax,
+            @RequestParam(value = "torquemin",required = false,defaultValue = "-1") Double torquemin,
+            @RequestParam(value = "energymin",required = false,defaultValue = "-1") Double energymin,
+            @RequestParam(value = "energymax",required = false,defaultValue = "-1") Double energymax,
+            @RequestParam(value = "pricemin",required = false,defaultValue = "-1") Double pricemin,
+            @RequestParam(value = "pricamax",required = false,defaultValue = "-1") Double pricamax
     ){
         buffInit();
-        List<CarParameter> lib = iCarParameterService.list();
-        List<CarParameter> res = new ArrayList<>();
-        if(!name.isEmpty()) {
-            for (CarParameter value : lib) {
-                if (value.getSysParaCarName().contains(name)) {
-                    res.add(value);
-                }
-            }
-            if (!type.isEmpty()) {
-                res.clear();
-                for (CarParameter value : lib) {
-                    if (value.getSysParaCarName().contains(name) && value.getSysParaType().contains(type)) {
-                        res.add(value);
-                    }
-                }
-                if (!manufactor.isEmpty()) {
-                    res.clear();
-                    for (CarParameter value : lib) {
-                        if (value.getSysParaCarName().contains(name) && value.getSysParaType().contains(type) && value.getSysParaManufactor().contains(manufactor)) {
-                            res.add(value);
-                        }
-                    }
-                    carInfoBuffer.addAll(res);
-                    return res;
-                }
-                carInfoBuffer.addAll(res);
-                return res;
-            }
-            carInfoBuffer.addAll(res);
-            return res;
-        }else{
-            carInfoBuffer.addAll(lib);
-            return lib;
-        }
+        QueryWrapper<CarParameter> dataSaleNumQueryWrapper = new QueryWrapper<>();
+        dataSaleNumQueryWrapper
+                .like(StringUtils.isNotEmpty(name),"sys_para_car_name",name)
+                .eq(StringUtils.isNotEmpty(type),"sys_para_type",type)
+                .eq(StringUtils.isNotEmpty(manufactor),"sys_para_manufactor",manufactor)
+                .le(speedmax>=0,"sys_para_maxspeed",speedmax)
+                .ge(speedmin>=0,"sys_para_maxspeed",speedmin)
+                .le(torquemax>=0,"sys_para_torque",torquemax)
+                .ge(torquemin>=0,"sys_para_torque",torquemin)
+                .le(energymax>=0,"sys_para_km_energy",energymax)
+                .ge(energymin>=0,"sys_para_km_energy",energymin)
+                .le(pricamax>=0,"sys_para_guide_price",pricamax)
+                .ge(pricemin>=0,"sys_para_guide_price",speedmin);
+        List<CarParameter> res = iCarParameterService.list(dataSaleNumQueryWrapper);
+        carInfoBuffer = res;
+        return res;
     }
 
     @GetMapping("/changepage")
