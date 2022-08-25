@@ -26,6 +26,7 @@ class CaranalysisApplicationTests {
     private ICarParameterService iCarParameterService;
 
     private static HashMap<String,Integer> brandIdMap = new HashMap<>();
+    private static HashMap<String,String> urlSeriesMap = new HashMap<>();
 
     public static List<String[]> allCity() {
 
@@ -219,7 +220,41 @@ class CaranalysisApplicationTests {
         return brandIdMap.getOrDefault(brand,-1);
 
     }
+    public static String findUrlBySeries(String series){
+        if(urlSeriesMap.isEmpty()){
+            String filepath = "C:\\\\traditionalD\\\\education\\\\汽车图片.csv";
+            File csv = new File(filepath);
+            csv.setReadable(true);
+            csv.setWritable(false);
+            BufferedReader br = null;
+            try{
+                br = new BufferedReader(new FileReader(csv));
+            }catch (FileNotFoundException e){
+                e.printStackTrace();
+            }
+            String line = "";
+            String everyLine = "";
+            try{
+                line = br.readLine();
+                while((line = br.readLine())!=null){
+                    everyLine = line;
+                    String[] tmp = everyLine.split(",");
+                    String seriesName = tmp[0];
+                    String url = tmp[1];
+                    urlSeriesMap.put(seriesName,url);
+                }
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        //System.out.println(urlSeriesMap);
+        return urlSeriesMap.getOrDefault(series,"null");
+    }
 
+
+    void staticFuncTest(){
+        //System.out.println(findUrlBySeries("哈弗H6"));
+    }
     void saleAreaContextLoads() {
         //System.out.println(iDataSaleNumService.list());
         //DataUpdateController.readCsv("C:\\traditionalD\\education\\地区销售数据.csv");
@@ -288,10 +323,11 @@ class CaranalysisApplicationTests {
             e.printStackTrace();
         }
     }
-
     void saleTimeContextLoads(){
 
     }
+
+
     @Test
     void carParameterContextLoads(){
         String filepath = "C:\\\\traditionalD\\\\education\\\\car_parameter.csv";
@@ -311,9 +347,6 @@ class CaranalysisApplicationTests {
             while((line = br.readLine())!=null){
                 everyLine = line;
                 //System.out.println(everyLine);
-
-
-
                 //create temp val to store a line
                 String[] tmp = everyLine.split(",");
                 Integer carId =0;
@@ -322,12 +355,29 @@ class CaranalysisApplicationTests {
                 }catch (NumberFormatException e){
                     carId = -1;
                 }
+                String carSeries="";
                 String carName ="";
-                try {
-                    carName = (tmp[1].split(" "))[0];
-                }catch (Exception e){
-                    carName = "null";
+                String carUrl="";
+                if(!tmp[1].isEmpty()){
+                    try{
+                        carSeries =(tmp[1].split(" "))[0];
+                        carUrl = findUrlBySeries(carSeries);
+                    }catch (Exception e){
+                        carSeries="null";
+                        carUrl="null";
+                    }
+
+                    try {
+                        carName = tmp[1];
+                    }catch (Exception e){
+                        carName = "null";
+                    }
+                }else {
+                    carSeries = "null";
+                    carName="null";
+                    carUrl="null";
                 }
+
                 Double carGuidePrice =0.0;
                 try {
                     carGuidePrice = tmp[2].equals("-") ? -1.0 : Double.parseDouble(tmp[2]);
@@ -398,7 +448,9 @@ class CaranalysisApplicationTests {
                 //create temp entity to store list(except cnt for later operation)
                 CarParameter tempCarParameterEntity = new CarParameter();
                 tempCarParameterEntity.setSysParaCarId(carId);
+                tempCarParameterEntity.setSysParaCarSeries(carSeries);
                 tempCarParameterEntity.setSysParaCarName(carName);
+                tempCarParameterEntity.setSysParaPicUrl(carUrl);
                 tempCarParameterEntity.setSysParaGuidePrice(carGuidePrice);
                 tempCarParameterEntity.setSysParaMinPrice(carMinPrice);
                 tempCarParameterEntity.setSysParaPopularity(carPopularity);

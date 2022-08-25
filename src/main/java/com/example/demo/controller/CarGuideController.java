@@ -86,7 +86,7 @@ public class CarGuideController {
     public List<CarParameter> search(
             @RequestParam(value = "name",required = false,defaultValue = "") String name,
             @RequestParam(value = "type",required = false,defaultValue = "") String type,
-            @RequestParam(value = "manufactor",required = false,defaultValue = "-1") String manufactor,
+            @RequestParam(value = "manufactor",required = false,defaultValue = "") String manufactor,
             @RequestParam(value = "speedmax",required = false,defaultValue = "-1") Double speedmax,
             @RequestParam(value = "speedmin",required = false,defaultValue = "-1") Double speedmin,
             @RequestParam(value = "torquemax",required = false,defaultValue = "-1") Double torquemax,
@@ -94,7 +94,7 @@ public class CarGuideController {
             @RequestParam(value = "energymin",required = false,defaultValue = "-1") Double energymin,
             @RequestParam(value = "energymax",required = false,defaultValue = "-1") Double energymax,
             @RequestParam(value = "pricemin",required = false,defaultValue = "-1") Double pricemin,
-            @RequestParam(value = "pricamax",required = false,defaultValue = "-1") Double pricamax
+            @RequestParam(value = "pricemax",required = false,defaultValue = "-1") Double pricemax
     ){
         buffInit();
         QueryWrapper<CarParameter> dataSaleNumQueryWrapper = new QueryWrapper<>();
@@ -108,8 +108,8 @@ public class CarGuideController {
                 .ge(torquemin>=0,"sys_para_torque",torquemin)
                 .le(energymax>=0,"sys_para_km_energy",energymax)
                 .ge(energymin>=0,"sys_para_km_energy",energymin)
-                .le(pricamax>=0,"sys_para_guide_price",pricamax)
-                .ge(pricemin>=0,"sys_para_guide_price",speedmin);
+                .le(pricemax>=0,"sys_para_guide_price",pricemax)
+                .ge(pricemin>=0,"sys_para_guide_price",pricemin);
         List<CarParameter> res = iCarParameterService.list(dataSaleNumQueryWrapper);
         carInfoBuffer = res;
         return res;

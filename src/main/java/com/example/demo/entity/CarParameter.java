@@ -81,7 +81,10 @@ public class CarParameter implements Serializable {
      * 汽车生产年份
      */
     private Date sysParaProductiveYear;
-
+    /**
+     * 汽车系列名称
+     */
+    private String sysParaCarSeries;
     /**
      * 汽车型号/名称
      */
@@ -98,6 +101,10 @@ public class CarParameter implements Serializable {
      * 汽车成交最低价格
      */
     private Double sysParaMinPrice;
+    /**
+     * 汽车图片资源链接
+     */
+    private String sysParaPicUrl;
 
 
 }
