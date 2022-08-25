@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import javax.sql.rowset.serial.SerialStruct;
+
 /**
  * <p>
  * 
@@ -24,8 +26,8 @@ public class SaleCar implements Serializable {
 
     @TableId(value = "sale_car_name_id")
     private Integer saleCarNameId;
-
-    private String saleCarName;
+    private String saleCarDate;
+    private String saleCarData;
 
 
 }
