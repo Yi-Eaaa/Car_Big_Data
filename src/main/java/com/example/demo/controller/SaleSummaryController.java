@@ -29,10 +29,30 @@ public class SaleSummaryController {
     private IDataSaleNumService iDataSaleNumService;
     @Autowired
     private IBrandSaleService iBrandSaleService;
+    @Autowired
+    private IBrandCarSaleService iBrandCarSaleService;
 
     @GetMapping("/branddata")
     public List<BrandSale> getAllBrandSaleData(){
         List<BrandSale> res = iBrandSaleService.list( new QueryWrapper<BrandSale>().orderByDesc("sale_num"));
+        int rank = 1;
+        for(BrandSale value: res){
+            value.setId(rank++);
+        }
+        return res;
+    }
+
+    @GetMapping("/brandcardata")
+    public List<BrandCarSale> getAllBrandCarSaleData(
+            @RequestParam(value = "brand",required = true) String brand
+    ){
+        QueryWrapper<BrandCarSale> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like("brand_name",brand).orderByDesc("sale_num");
+        List<BrandCarSale> res = iBrandCarSaleService.list(queryWrapper);
+        int rank = 1;
+        for(BrandCarSale value: res){
+            value.setId(rank++);
+        }
         return res;
     }
     @GetMapping("/areadata")
