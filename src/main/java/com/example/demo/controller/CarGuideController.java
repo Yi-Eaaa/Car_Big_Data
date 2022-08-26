@@ -95,6 +95,7 @@ public class CarGuideController {
             @RequestParam(value = "energymax",required = false,defaultValue = "-1") Double energymax,
             @RequestParam(value = "pricemin",required = false,defaultValue = "-1") Double pricemin,
             @RequestParam(value = "pricemax",required = false,defaultValue = "-1") Double pricemax
+
     ){
         buffInit();
         QueryWrapper<CarParameter> dataSaleNumQueryWrapper = new QueryWrapper<>();

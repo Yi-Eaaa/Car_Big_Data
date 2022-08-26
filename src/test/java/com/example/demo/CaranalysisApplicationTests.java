@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.demo.controller.DataUpdateController;
 import com.example.demo.entity.CarParameter;
 import com.example.demo.entity.DataSaleNum;
+import com.example.demo.entity.SaleCar;
 import com.example.demo.service.ICarParameterService;
 import com.example.demo.service.IDataSaleNumService;
+import com.example.demo.service.ISaleCarService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +26,9 @@ class CaranalysisApplicationTests {
 
     @Autowired
     private ICarParameterService iCarParameterService;
+
+    @Autowired
+    private ISaleCarService iSaleCarService;
 
     private static HashMap<String,Integer> brandIdMap = new HashMap<>();
     private static HashMap<String,String> urlSeriesMap = new HashMap<>();
@@ -325,7 +330,7 @@ class CaranalysisApplicationTests {
     }
     @Test
     void saleTimeContextLoads(){
-        String filepath = "C:\\\\traditionalD\\\\education\\\\地区销售数据.csv";
+        String filepath = "C:\\\\traditionalD\\\\education\\\\car_sale_time.csv";
         File csv = new File(filepath);
         csv.setReadable(true);
         csv.setWritable(false);
@@ -337,10 +342,25 @@ class CaranalysisApplicationTests {
         }
         String line = "";
         String everyLine = "";
+
         try {
+            br.readLine();
             while ((line = br.readLine()) != null) {
                 everyLine = line;
+                String[] tmp = everyLine.split(",");
+                Integer id;
+                String dateList;
+                String dataList;
+                try{id = Integer.parseInt(tmp[0]);}catch (NumberFormatException e){continue;}
+                dateList = tmp[1];
+                dataList = tmp[2];
 
+                SaleCar tempSaleCarEntity = new SaleCar();
+                tempSaleCarEntity.setSaleCarNameId(id);
+                tempSaleCarEntity.setSaleCarDate(dateList);
+                tempSaleCarEntity.setSaleCarData(dataList);
+
+                iSaleCarService.save(tempSaleCarEntity);
             }
         }catch (Exception e){
             e.printStackTrace();
