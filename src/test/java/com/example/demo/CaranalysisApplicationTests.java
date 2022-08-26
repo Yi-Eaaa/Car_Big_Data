@@ -352,8 +352,8 @@ class CaranalysisApplicationTests {
                 String dateList;
                 String dataList;
                 try{id = Integer.parseInt(tmp[0]);}catch (NumberFormatException e){continue;}
-                dateList = tmp[1];
-                dataList = tmp[2];
+                try{dateList = tmp[1];}catch (ArrayIndexOutOfBoundsException e){e.printStackTrace();continue;}
+                try{dataList = tmp[2];}catch (ArrayIndexOutOfBoundsException e){e.printStackTrace();continue;}
 
                 SaleCar tempSaleCarEntity = new SaleCar();
                 tempSaleCarEntity.setSaleCarNameId(id);

@@ -27,8 +27,13 @@ public class SaleSummaryController {
     private ISaleDayService iSaleDayService;
     @Autowired
     private IDataSaleNumService iDataSaleNumService;
+    @Autowired
+    private IBrandSaleService iBrandSaleService;
 
-
+    @GetMapping("/branddata")
+    public List<BrandSale> getAllBrandSaleData(){
+        return iBrandSaleService.list();
+    }
     @GetMapping("/areadata")
     public DataSaleNum getAreaSaleData(
             @RequestParam(value = "carname",required = true) String carname,
