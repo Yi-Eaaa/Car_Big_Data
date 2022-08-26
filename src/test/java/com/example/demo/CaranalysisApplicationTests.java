@@ -328,7 +328,7 @@ class CaranalysisApplicationTests {
             e.printStackTrace();
         }
     }
-    @Test
+
     void saleTimeContextLoads(){
         String filepath = "C:\\\\traditionalD\\\\education\\\\car_sale_time.csv";
         File csv = new File(filepath);
@@ -367,8 +367,6 @@ class CaranalysisApplicationTests {
         }
     }
 
-
-    @Test
     void carParameterContextLoads(){
         String filepath = "C:\\\\traditionalD\\\\education\\\\car_parameter.csv";
         File csv = new File(filepath);

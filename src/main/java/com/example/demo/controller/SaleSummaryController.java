@@ -32,7 +32,8 @@ public class SaleSummaryController {
 
     @GetMapping("/branddata")
     public List<BrandSale> getAllBrandSaleData(){
-        return iBrandSaleService.list();
+        List<BrandSale> res = iBrandSaleService.list( new QueryWrapper<BrandSale>().orderByDesc("sale_num"));
+        return res;
     }
     @GetMapping("/areadata")
     public DataSaleNum getAreaSaleData(
