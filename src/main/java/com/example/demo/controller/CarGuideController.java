@@ -82,6 +82,7 @@ public class CarGuideController {
         return res;
     }
 
+
     @GetMapping("/search")
     public List<CarParameter> search(
             @RequestParam(value = "name",required = false,defaultValue = "") String name,
@@ -97,10 +98,14 @@ public class CarGuideController {
             @RequestParam(value = "pricemax",required = false,defaultValue = "-1") Double pricemax
 
     ){
-        buffInit();
+        if(!carInfoBuffer.isEmpty()){
+            buffInit();
+        }
         QueryWrapper<CarParameter> dataSaleNumQueryWrapper = new QueryWrapper<>();
         dataSaleNumQueryWrapper
-                .like(StringUtils.isNotEmpty(name),"sys_para_car_name",name)
+                .select("distinct sys_para_car_series")
+                .select("sys_para_minclearance,sys_para_maxspeed,sys_para_acc,sys_para_torque,sys_para_power,sys_para_km_energy,sys_para_km_energy_report,sys_para_type,sys_para_manufactor,sys_para_manufactor_id,sys_para_power_type,sys_para_productive_year,sys_para_car_series,sys_para_car_name,sys_para_popularity,sys_para_guide_price,sys_para_min_price,sys_para_pic_url")
+                .like(StringUtils.isNotEmpty(name),"sys_para_car_series",name)
                 .eq(StringUtils.isNotEmpty(type),"sys_para_type",type)
                 .eq(StringUtils.isNotEmpty(manufactor),"sys_para_manufactor",manufactor)
                 .le(speedmax>=0,"sys_para_maxspeed",speedmax)
@@ -112,7 +117,7 @@ public class CarGuideController {
                 .le(pricemax>=0,"sys_para_guide_price",pricemax)
                 .ge(pricemin>=0,"sys_para_guide_price",pricemin);
         List<CarParameter> res = iCarParameterService.list(dataSaleNumQueryWrapper);
-        carInfoBuffer = res;
+        carInfoBuffer = res.subList(0,12>=res.size()? res.size()-1:12);
         return res;
     }
 
