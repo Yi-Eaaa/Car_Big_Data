@@ -95,7 +95,9 @@ public class CarGuideController {
             @RequestParam(value = "energymin",required = false,defaultValue = "-1") Double energymin,
             @RequestParam(value = "energymax",required = false,defaultValue = "-1") Double energymax,
             @RequestParam(value = "pricemin",required = false,defaultValue = "-1") Double pricemin,
-            @RequestParam(value = "pricemax",required = false,defaultValue = "-1") Double pricemax
+            @RequestParam(value = "pricemax",required = false,defaultValue = "-1") Double pricemax,
+            @RequestParam(value = "page",required = false,defaultValue = "1") Integer page,
+            @RequestParam(value = "size",required = false,defaultValue = "12") Integer size
 
     ){
         if(!carInfoBuffer.isEmpty()){
@@ -117,8 +119,8 @@ public class CarGuideController {
                 .le(pricemax>=0,"sys_para_guide_price",pricemax)
                 .ge(pricemin>=0,"sys_para_guide_price",pricemin);
         List<CarParameter> res = iCarParameterService.list(dataSaleNumQueryWrapper);
-        carInfoBuffer = res.subList(0,12>=res.size()? res.size()-1:12);
-        return res;
+        carInfoBuffer = res;
+        return res.subList(0,page*size>=res.size()? res.size()-1:page*size);
     }
 
     @GetMapping("/changepage")
